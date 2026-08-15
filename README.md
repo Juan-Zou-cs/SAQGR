@@ -53,11 +53,13 @@ The model first generates a raw 90-direction prediction and then applies ODDC to
 
 ```python
 pred_raw, pred_final = model(x, bvec_out=bvec_out)
+```
 
 where:
 
-- pred_raw: raw 90-direction prediction before ODDC;
-- pred_final: final measurement-consistent 90-direction reconstruction after ODDC.
+- `pred_raw`: raw 90-direction prediction before ODDC;
+- `pred_final`: final measurement-consistent 90-direction reconstruction after ODDC.
+
 
 During training, the reconstruction loss and validation/model selection are computed using pred_raw over all 90 directions. During inference, ODDC is applied to obtain pred_final, which is used as the final reconstruction and is used by default for downstream DTI and NODDI fitting.
 
