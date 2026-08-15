@@ -33,24 +33,34 @@ All indices are **0-based** and must be consistent with the ordering of the 90 t
 
 ## 3. Model overview
 
+The overall framework of **SAQGR** is shown below.
+
+<p align="center">
+  <img src="framework.png" width="95%" alt="SAQGR framework">
+</p>
+
+<p align="center">
+  <em>Overview of the proposed Spatial-Angular q-Space Guided Reconstruction (SAQGR) framework.</em>
+</p>
+
 SAQGR contains three main components:
 
-- **SSSE (Spatial State-Space Encoder):** combines local convolutional features with spatial Mamba modeling.
-- **QGD (q-Space Graph Decoder):** uses antipodally invariant b-vector features and spherical neighborhood aggregation for direction-specific reconstruction.
-- **ODDC (Observed-Direction Data Consistency):** restores the physically acquired measurements at their corresponding output indices.
+- **SSSE (Spatial State-Space Encoder):** combines local convolutional features with spatial Mamba modeling to capture both local anatomical details and extended spatial dependencies.
+- **QGD (q-Space Graph Decoder):** explicitly incorporates antipodally invariant b-vector features and spherical neighborhood relationships for direction-specific diffusion signal reconstruction.
+- **ODDC (Observed-Direction Data Consistency):** restores the physically acquired measurements at their corresponding output indices to ensure measurement consistency.
 
-For the final implementation, the model returns two outputs:
+The model first generates a raw 90-direction prediction and then applies ODDC to obtain the final reconstruction:
 
 ```python
 pred_raw, pred_final = model(x, bvec_out=bvec_out)
-```
 
 where:
 
-- `pred_raw`: raw 90-direction prediction before ODDC;
-- `pred_final`: final measurement-consistent 90-direction reconstruction after ODDC.
+- pred_raw: raw 90-direction prediction before ODDC;
+- pred_final: final measurement-consistent 90-direction reconstruction after ODDC.
 
-Training loss and validation/model selection are computed using `pred_raw`, while downstream DTI/NODDI fitting uses `pred_final` by default.
+During training, the reconstruction loss and validation/model selection are computed using pred_raw over all 90 directions. During inference, ODDC is applied to obtain pred_final, which is used as the final reconstruction and is used by default for downstream DTI and NODDI fitting.
+
 
 ## 4. Environment
 
